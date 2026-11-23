@@ -1,0 +1,59 @@
+{
+  "ranAt": "2026-11-23T18:49:08.540Z",
+  "browser": "157.0.8103.79",
+  "scenarios": {
+    "typed with a correction": {
+      "events": 39,
+      "kinds": {
+        "type": 38,
+        "delete": 1
+      },
+      "pasteEvents": 0,
+      "pastedSharePct": 0,
+      "finalMatchesTextbox": true,
+      "verifies": true,
+      "pageErrors": 0
+    },
+    "one outside paste": {
+      "events": 8,
+      "kinds": {
+        "type": 7,
+        "paste": 1
+      },
+      "pasteEvents": 1,
+      "pastedSharePct": 90.5,
+      "finalMatchesTextbox": true,
+      "verifies": true,
+      "pageErrors": 0
+    },
+    "writer moves own sentence (cut, paste)": {
+      "pastedShareSeen": 0.484375,
+      "failed": "own text moved inside the draft is shown as pasted (48% of final text)\n\n31 !== 0\n"
+    },
+    "outside paste, then cut and moved": {
+      "events": 9,
+      "kinds": {
+        "type": 6,
+        "paste": 2,
+        "delete": 1
+      },
+      "pasteEvents": 2,
+      "pastedSharePct": 86.4,
+      "finalMatchesTextbox": true,
+      "verifies": true,
+      "pageErrors": 0
+    },
+    "save and verify": {
+      "downloaded": true,
+      "goodWithSeal": true,
+      "wrongSealRejected": true,
+      "tamperCaught": true,
+      "tamperMessage": "SAMPLE: event 767 of the typed sample was changed by this button.Does not verifyEvent 767: its fingerprint does not match. This event, or one before it, was changed after recording.First bad event: 767 of 1532"
+    },
+    "samples and compare": {
+      "simulatedBannerShown": true,
+      "compareCards": 3
+    }
+  },
+  "failures": 1
+}

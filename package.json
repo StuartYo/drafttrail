@@ -1,0 +1,17 @@
+{
+  "name": "drafttrail",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Write in the browser, keep a tamper-evident replay of how the text was written, verify it offline.",
+  "license": "MIT",
+  "scripts": {
+    "test": "node --test test/core.test.mjs",
+    "samples": "node scripts/gen-samples.mjs",
+    "e2e": "node test/browser.e2e.mjs",
+    "serve": "node scripts/serve.mjs"
+  },
+  "devDependencies": {
+    "playwright-core": "^1.65.1"
+  }
+}

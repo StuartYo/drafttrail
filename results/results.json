@@ -1,0 +1,148 @@
+{
+  "generatedAt": "2026-11-23T19:03:05.649Z",
+  "note": "Samples are simulated by scripts/gen-samples.mjs (seeded), not written by a person.",
+  "samples": {
+    "typed": {
+      "file": "sample-typed.json",
+      "events": 1581,
+      "words": 278,
+      "finalChars": 1459,
+      "finalTextSha256": "2fabe8fa4f96f58539b21efcf30315653a172970e8f7e6c13c00e4b183629b26",
+      "pasteEvents": 0,
+      "largestPaste": 0,
+      "pastedSharePct": 0,
+      "typedEvents": 1520,
+      "deleteEvents": 61,
+      "pauses2s": 17,
+      "removedPer100Added": 4,
+      "spanSeconds": 296,
+      "seal": "C2C44C201C13-1581"
+    },
+    "pasted": {
+      "file": "sample-pasted.json",
+      "events": 1,
+      "words": 278,
+      "finalChars": 1459,
+      "finalTextSha256": "2fabe8fa4f96f58539b21efcf30315653a172970e8f7e6c13c00e4b183629b26",
+      "pasteEvents": 1,
+      "largestPaste": 1459,
+      "pastedSharePct": 100,
+      "typedEvents": 0,
+      "deleteEvents": 0,
+      "pauses2s": 0,
+      "removedPer100Added": 0,
+      "spanSeconds": 0,
+      "seal": "989D717EEF2F-1"
+    },
+    "pastedEdited": {
+      "file": "sample-pasted-edited.json",
+      "events": 80,
+      "words": 278,
+      "finalChars": 1459,
+      "finalTextSha256": "2fabe8fa4f96f58539b21efcf30315653a172970e8f7e6c13c00e4b183629b26",
+      "pasteEvents": 1,
+      "largestPaste": 1452,
+      "pastedSharePct": 97.1,
+      "typedEvents": 43,
+      "deleteEvents": 36,
+      "pauses2s": 4,
+      "removedPer100Added": 2,
+      "spanSeconds": 30,
+      "seal": "14C6A151A46C-80"
+    }
+  },
+  "textOnly": {
+    "identicalFinalText": true,
+    "meaning": "Any checker that only reads the finished essay (an AI detector, a language model, a teacher reading it) gets the same input for all three samples, so it must give all three the same answer."
+  },
+  "tamper": {
+    "edits": 300,
+    "caught": 300,
+    "caughtAtExactEvent": 300,
+    "avgVerifyMs": 19,
+    "eventsPerFile": 1581,
+    "relabelPasteAsTyped": {
+      "caught": true,
+      "reason": "Event 1: its fingerprint does not match. This event, or one before it, was changed after recording."
+    },
+    "fullRebuild": {
+      "passesWithoutSeal": true,
+      "passesWithOriginalSeal": false
+    }
+  },
+  "browser": {
+    "ranAt": "2026-11-23T18:57:32.595Z",
+    "browser": "157.0.8103.79",
+    "scenarios": {
+      "typed with a correction": {
+        "events": 39,
+        "kinds": {
+          "type": 38,
+          "delete": 1
+        },
+        "pasteEvents": 0,
+        "pastedSharePct": 0,
+        "finalMatchesTextbox": true,
+        "verifies": true,
+        "pageErrors": 0
+      },
+      "one outside paste": {
+        "events": 8,
+        "kinds": {
+          "type": 7,
+          "paste": 1
+        },
+        "pasteEvents": 1,
+        "pastedSharePct": 90.5,
+        "finalMatchesTextbox": true,
+        "verifies": true,
+        "pageErrors": 0
+      },
+      "writer moves own sentence (cut, paste)": {
+        "events": 66,
+        "kinds": {
+          "type": 64,
+          "delete": 1,
+          "move": 1
+        },
+        "pasteEvents": 0,
+        "pastedSharePct": 0,
+        "finalMatchesTextbox": true,
+        "verifies": true,
+        "pageErrors": 0
+      },
+      "outside paste, then cut and moved": {
+        "events": 9,
+        "kinds": {
+          "type": 6,
+          "paste": 1,
+          "delete": 1,
+          "move": 1
+        },
+        "pasteEvents": 1,
+        "pastedSharePct": 86.4,
+        "finalMatchesTextbox": true,
+        "verifies": true,
+        "pageErrors": 0
+      },
+      "save and verify": {
+        "downloaded": true,
+        "goodWithSeal": true,
+        "wrongSealRejected": true,
+        "tamperCaught": true,
+        "tamperMessage": "SAMPLE: event 791 of the typed sample was changed by this button.Does not verifyEvent 791: its fingerprint does not match. This event, or one before it, was changed after recording.First bad event: 791 of 1581"
+      },
+      "samples and compare": {
+        "simulatedBannerShown": true,
+        "compareCards": 3
+      }
+    },
+    "failures": 0
+  },
+  "iteration": {
+    "found": "First browser run: a writer who cut one of their own sentences and pasted it elsewhere was shown with part of the essay \"pasted\".",
+    "beforeFixPastedSharePct": 48.4,
+    "afterFixPastedSharePct": 0,
+    "change": "Pastes of text that is already in the draft, or was cut from it, are now recorded as a \"move\" and keep their original colour. Pasted text that is cut and moved stays marked as pasted."
+  }
+}

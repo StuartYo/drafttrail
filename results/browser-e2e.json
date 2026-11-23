@@ -1,0 +1,69 @@
+{
+  "ranAt": "2026-11-23T18:57:32.595Z",
+  "browser": "157.0.8103.79",
+  "scenarios": {
+    "typed with a correction": {
+      "events": 39,
+      "kinds": {
+        "type": 38,
+        "delete": 1
+      },
+      "pasteEvents": 0,
+      "pastedSharePct": 0,
+      "finalMatchesTextbox": true,
+      "verifies": true,
+      "pageErrors": 0
+    },
+    "one outside paste": {
+      "events": 8,
+      "kinds": {
+        "type": 7,
+        "paste": 1
+      },
+      "pasteEvents": 1,
+      "pastedSharePct": 90.5,
+      "finalMatchesTextbox": true,
+      "verifies": true,
+      "pageErrors": 0
+    },
+    "writer moves own sentence (cut, paste)": {
+      "events": 66,
+      "kinds": {
+        "type": 64,
+        "delete": 1,
+        "move": 1
+      },
+      "pasteEvents": 0,
+      "pastedSharePct": 0,
+      "finalMatchesTextbox": true,
+      "verifies": true,
+      "pageErrors": 0
+    },
+    "outside paste, then cut and moved": {
+      "events": 9,
+      "kinds": {
+        "type": 6,
+        "paste": 1,
+        "delete": 1,
+        "move": 1
+      },
+      "pasteEvents": 1,
+      "pastedSharePct": 86.4,
+      "finalMatchesTextbox": true,
+      "verifies": true,
+      "pageErrors": 0
+    },
+    "save and verify": {
+      "downloaded": true,
+      "goodWithSeal": true,
+      "wrongSealRejected": true,
+      "tamperCaught": true,
+      "tamperMessage": "SAMPLE: event 791 of the typed sample was changed by this button.Does not verifyEvent 791: its fingerprint does not match. This event, or one before it, was changed after recording.First bad event: 791 of 1581"
+    },
+    "samples and compare": {
+      "simulatedBannerShown": true,
+      "compareCards": 3
+    }
+  },
+  "failures": 0
+}

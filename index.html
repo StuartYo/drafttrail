@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Drafttrail - process evidence for your writing</title>
+<meta name="description" content="Write in the browser, keep a tamper-evident replay of how the text was written, and let a reader verify it offline. No account, no upload.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="src/style.css">
+</head>
+<body>
+<header class="top">
+  <div class="brand">
+    <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M3 17c4 0 4-10 8-10s4 10 10 10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    <span>Drafttrail</span>
+  </div>
+  <nav class="tabs" role="tablist" aria-label="Sections">
+    <button role="tab" id="tab-write" aria-controls="view-write" aria-selected="true">Write</button>
+    <button role="tab" id="tab-replay" aria-controls="view-replay" aria-selected="false">Replay</button>
+    <button role="tab" id="tab-compare" aria-controls="view-compare" aria-selected="false">Compare</button>
+    <button role="tab" id="tab-verify" aria-controls="view-verify" aria-selected="false">Verify</button>
+  </nav>
+  <div class="privacy">Stays in this browser. Nothing is uploaded.</div>
+</header>
+
+<main>
+<!-- WRITE -->
+<section id="view-write" class="view" role="tabpanel" aria-labelledby="tab-write">
+  <div id="resume-bar" class="bar" hidden>
+    <span id="resume-text"></span>
+    <span class="bar-actions"><button id="resume-yes" class="btn">Resume draft</button><button id="resume-no" class="btn ghost">Discard</button></span>
+  </div>
+  <p class="intro">For writers whose own work gets flagged by AI detectors. Write your draft here. Drafttrail keeps a timed record of how the text grew, which you can save and hand to a teacher. They replay it and check it was not edited afterwards.</p>
+  <div class="split">
+    <div class="pane">
+      <label for="editor" class="lbl">Your draft</label>
+      <textarea id="editor" spellcheck="true" placeholder="Start typing here. Drafttrail notes when each character arrives, what was deleted, and what was pasted."></textarea>
+      <p class="hint">Typing, deleting, pausing and pasting are recorded as timed events. The text of your essay is saved inside the recording file you export, so only share that file with people you trust.</p>
+    </div>
+    <aside class="pane side">
+      <h2>Recording</h2>
+      <dl class="kv">
+        <dt>Events</dt><dd id="live-events">0</dd>
+        <dt>Paste events</dt><dd id="live-pastes">0</dd>
+        <dt>Characters</dt><dd id="live-chars">0</dd>
+        <dt>Seal code</dt><dd id="live-seal" class="mono">-</dd>
+      </dl>
+      <div class="actions">
+        <button id="save" class="btn primary" disabled>Save recording (.json)</button>
+        <button id="open-replay" class="btn" disabled>Replay this draft</button>
+        <button id="copy-seal" class="btn" disabled>Copy seal code</button>
+        <button id="reset" class="btn ghost" disabled>Start over</button>
+      </div>
+      <p class="note" id="save-note">The seal code is a short fingerprint of the whole recording. Give it to your reader in a separate message so the file cannot be quietly rebuilt later.</p>
+      <div class="samples">
+        <h3>No essay yet? Try a sample</h3>
+        <p class="note">Samples are simulated by a script, not written by a person. They are labelled on screen.</p>
+        <button class="btn sample" data-sample="sample-typed.json">Typed by hand</button>
+        <button class="btn sample" data-sample="sample-pasted.json">Pasted in one go</button>
+        <button class="btn sample" data-sample="sample-pasted-edited.json">Pasted, then edited</button>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- REPLAY -->
+<section id="view-replay" class="view" role="tabpanel" aria-labelledby="tab-replay" hidden>
+  <div id="replay-empty" class="empty">
+    <h2>Nothing to replay yet</h2>
+    <p>Write something in the Write tab, or open a sample recording.</p>
+    <div class="actions row">
+      <button class="btn sample" data-sample="sample-typed.json">Typed by hand</button>
+      <button class="btn sample" data-sample="sample-pasted.json">Pasted in one go</button>
+      <button class="btn sample" data-sample="sample-pasted-edited.json">Pasted, then edited</button>
+    </div>
+  </div>
+  <div id="replay-main" hidden>
+    <div id="sim-banner" class="bar warn" hidden>SAMPLE: this recording was simulated by a script. It was not written by a person.</div>
+    <div class="split">
+      <div class="pane">
+        <div class="replay-head">
+          <h2 id="replay-title">Replay</h2>
+          <div class="legend" aria-label="Legend">
+            <span><i class="sw typed"></i>Typed</span>
+            <span><i class="sw paste"></i>Pasted</span>
+            <span><i class="sw other"></i>Other change</span>
+          </div>
+        </div>
+        <div id="replay-text" class="replay-text" tabindex="0" aria-live="off"></div>
+        <div class="player">
+          <button id="play" class="btn primary" aria-label="Play">Play</button>
+          <input id="scrub" type="range" min="0" max="0" value="0" aria-label="Position in the recording">
+          <label class="speed">Speed
+            <select id="speed"><option value="1">1x</option><option value="5">5x</option><option value="20" selected>20x</option><option value="100">100x</option></select>
+          </label>
+          <button id="next-paste" class="btn">Next paste</button>
+        </div>
+        <div class="clock mono" id="clock"></div>
+      </div>
+      <aside class="pane side">
+        <h2>What the recording shows</h2>
+        <ul id="plain" class="plain"></ul>
+        <table class="stats" id="stats"></table>
+        <p class="note">These are measurements, not a verdict. A recording cannot prove a person did not use AI. It shows how the text arrived.</p>
+      </aside>
+    </div>
+    <div class="pane wide">
+      <h3>Timeline</h3>
+      <svg id="timeline" class="timeline" viewBox="0 0 1000 96" preserveAspectRatio="none" role="img" aria-label="Timeline of recorded events"></svg>
+      <div class="axis mono"><span>0:00</span><span id="axis-end"></span></div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPARE -->
+<section id="view-compare" class="view" role="tabpanel" aria-labelledby="tab-compare" hidden>
+  <div class="bar warn">SAMPLE: the three recordings below are simulated by a script from one fixed essay. None was written by a person.</div>
+  <h2 class="pad">Same essay, three ways of getting it onto the page</h2>
+  <p id="compare-lede" class="lede"></p>
+  <div id="compare-grid" class="compare"></div>
+</section>
+
+<!-- VERIFY -->
+<section id="view-verify" class="view" role="tabpanel" aria-labelledby="tab-verify" hidden>
+  <div class="split">
+    <div class="pane">
+      <h2>Check a recording file</h2>
+      <p>Open a .json recording. Drafttrail recomputes the fingerprint chain in your browser and tells you where it stops matching.</p>
+      <div id="drop" class="drop" tabindex="0">
+        <input id="file" type="file" accept="application/json,.json" aria-label="Recording file">
+        <span>Choose a file or drop it here</span>
+      </div>
+      <label class="lbl" for="seal-in">Seal code from the writer (optional)</label>
+      <input id="seal-in" class="text" placeholder="e.g. C2C44C201C13-1581" autocomplete="off">
+      <div class="actions row">
+        <button id="verify-btn" class="btn primary" disabled>Verify</button>
+        <button id="tamper" class="btn">Try it: change one event in a sample, then verify</button>
+      </div>
+    </div>
+    <aside class="pane side">
+      <h2>Result</h2>
+      <div id="result" class="result idle">No file checked yet.</div>
+      <div class="actions"><button id="result-replay" class="btn" hidden>Replay this file</button></div>
+      <h3>What this can and cannot show</h3>
+      <ul class="plain small">
+        <li>It can show that events were not edited, removed or reordered after recording.</li>
+        <li>With the seal code, it can show the file was not rebuilt from scratch.</li>
+        <li>It cannot show who typed, or whether the words came from an AI and were retyped by hand.</li>
+      </ul>
+    </aside>
+  </div>
+</section>
+</main>
+<script type="module" src="src/app.js"></script>
+</body>
+</html>
