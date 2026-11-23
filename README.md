@@ -71,7 +71,7 @@ Opening `index.html` directly from disk works for writing and verifying; the sam
 - Fonts: IBM Plex Sans and IBM Plex Mono (SIL Open Font License), loaded from Google Fonts.
 - Browser tests and the demo video: Playwright (`playwright-core`, Apache-2.0) driving the local Chrome; video converted with FFmpeg.
 - Hashing: the browser's Web Crypto API. No other runtime libraries.
-- Code was written with help from Claude Code (Anthropic), an AI coding assistant.
+- Code was written with help from Claude Code (Anthropic), an AI coding assistant. The sample essay used in the simulated recordings was also drafted with Claude.
 - Research cited: Liang, Yuksekgonul, Mao, Wu, Zou (2023), arXiv:2304.02819.
 
 ## License
