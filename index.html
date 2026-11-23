@@ -32,7 +32,16 @@
     <span id="resume-text"></span>
     <span class="bar-actions"><button id="resume-yes" class="btn">Resume draft</button><button id="resume-no" class="btn ghost">Discard</button></span>
   </div>
-  <p class="intro">For writers whose own work gets flagged by AI detectors. Write your draft here. Drafttrail keeps a timed record of how the text grew, which you can save and hand to a teacher. They replay it and check it was not edited afterwards.</p>
+  <div class="lead">
+    <p class="intro">For writers whose own work gets flagged by AI detectors. Write your draft here. Drafttrail keeps a timed record of how the text grew, which you can save and hand to a teacher. They replay it and check it was not edited afterwards.</p>
+    <div class="samples" role="group" aria-label="Sample recordings">
+      <button class="btn primary start" id="go-compare">Start here: compare three samples</button>
+      <span class="samples-lbl">or open one:</span>
+      <button class="btn chip sample" data-sample="sample-typed.json">Typed by hand</button>
+      <button class="btn chip sample" data-sample="sample-pasted.json">Pasted in one go</button>
+      <button class="btn chip sample" data-sample="sample-pasted-edited.json">Pasted, then edited</button>
+    </div>
+  </div>
   <div class="split">
     <div class="pane">
       <label for="editor" class="lbl">Your draft</label>
@@ -47,19 +56,14 @@
         <dt>Characters</dt><dd id="live-chars">0</dd>
         <dt>Seal code</dt><dd id="live-seal" class="mono">-</dd>
       </dl>
+      <p id="rec-empty" class="empty-note">Nothing recorded yet. Start typing in the box, or open a sample above. Save and replay buttons appear here once there is something to save.</p>
+      <div id="rec-actions" hidden>
       <div class="actions">
         <button id="save" class="btn primary" disabled>Save recording (.json)</button>
         <button id="open-replay" class="btn" disabled>Replay this draft</button>
-        <button id="copy-seal" class="btn" disabled>Copy seal code</button>
-        <button id="reset" class="btn ghost" disabled>Start over</button>
       </div>
+      <div class="links"><button id="copy-seal" class="link" disabled>Copy seal code</button><button id="reset" class="link" disabled>Start over</button></div>
       <p class="note" id="save-note">The seal code is a short fingerprint of the whole recording. Give it to your reader in a separate message so the file cannot be quietly rebuilt later.</p>
-      <div class="samples">
-        <h3>No essay yet? Try a sample</h3>
-        <p class="note">Samples are simulated by a script, not written by a person. They are labelled on screen.</p>
-        <button class="btn sample" data-sample="sample-typed.json">Typed by hand</button>
-        <button class="btn sample" data-sample="sample-pasted.json">Pasted in one go</button>
-        <button class="btn sample" data-sample="sample-pasted-edited.json">Pasted, then edited</button>
       </div>
     </aside>
   </div>
@@ -135,13 +139,13 @@
       <label class="lbl" for="seal-in">Seal code from the writer (optional)</label>
       <input id="seal-in" class="text" placeholder="e.g. C2C44C201C13-1581" autocomplete="off">
       <div class="actions row">
-        <button id="verify-btn" class="btn primary" disabled>Verify</button>
-        <button id="tamper" class="btn">Try it: change one event in a sample, then verify</button>
+        <button id="tamper" class="btn primary">Try it: change one event in a sample, then verify</button>
+        <button id="verify-btn" class="btn" disabled>Verify again</button>
       </div>
     </div>
     <aside class="pane side">
       <h2>Result</h2>
-      <div id="result" class="result idle">No file checked yet.</div>
+      <div id="result" class="result idle">Choose a recording file on the left, or press "Try it" to see what happens to a file that was edited after recording.</div>
       <div class="actions"><button id="result-replay" class="btn" hidden>Replay this file</button></div>
       <h3>What this can and cannot show</h3>
       <ul class="plain small">

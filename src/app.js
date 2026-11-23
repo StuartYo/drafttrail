@@ -25,6 +25,7 @@ function show(name) {
   if (name === 'compare') renderCompare();
 }
 for (const t of TABS) $('tab-' + t).addEventListener('click', () => show(t));
+$('go-compare').addEventListener('click', () => show('compare'));
 
 /* ---------- helpers ---------- */
 const fmt = ms => { const s = Math.round(ms / 1000); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; };
@@ -51,6 +52,7 @@ function counters() {
   $('live-pastes').textContent = p;
   const has = rec.seq > 0;
   for (const id of ['save', 'open-replay', 'copy-seal', 'reset']) $(id).disabled = !has;
+  $('rec-actions').hidden = !has; $('rec-empty').hidden = has;
 }
 async function refreshSeal() {
   const snap = await rec.snapshot();
@@ -120,7 +122,7 @@ function openReplay(doc, name) {
   $('stats').innerHTML = [
     ['Words in final text', s.words], ['Typing events', s.typedEvents], ['Paste events', s.pasteEvents],
     ['Largest paste (characters)', s.largestPaste], ['Share of final text pasted', Math.round(s.pastedShare * 100) + '%'],
-    ['Pauses of 2 s or more', s.pauses], ['Typing speed (characters per minute)', s.typedCharsPerMin || 'n/a'],
+    ['Pauses of 2 s or more', s.pauses], ['Typing speed (characters per minute)', s.activeMs >= 10000 && s.typedCharsPerMin ? s.typedCharsPerMin : 'n/a'],
     ['Longest pause', fmt(s.longestPauseMs)], ['Total span', fmt(s.spanMs)],
   ].map(([k, v]) => `<tr><td>${k}</td><td>${v}</td></tr>`).join('');
   $('axis-end').textContent = fmt(s.spanMs);
@@ -225,15 +227,13 @@ async function renderCompare() {
   docs.forEach(([name, doc], k) => {
     const s = stats(doc);
     const el = document.createElement('div'); el.className = 'pane';
-    el.innerHTML = `<h3>${SAMPLES[name]}</h3><svg viewBox="0 0 400 64" preserveAspectRatio="none" id="cmp-${k}" role="img" aria-label="Timeline for ${SAMPLES[name]}"></svg>
+    el.innerHTML = `<h3>${SAMPLES[name]}</h3><div class="big"><span class="num">${Math.round(s.pastedShare * 100)}%</span><span class="unit">of the final text pasted</span></div><div class="sub">${s.pasteEvents} paste event${s.pasteEvents === 1 ? '' : 's'}, ${s.pauses} pause${s.pauses === 1 ? '' : 's'} of 2 s or more, ${fmt(s.spanMs)} of writing</div><svg viewBox="0 0 400 64" preserveAspectRatio="none" id="cmp-${k}" role="img" aria-label="Timeline for ${SAMPLES[name]}"></svg>
       <table class="stats">
-      <tr><td>Paste events</td><td>${s.pasteEvents}</td></tr>
-      <tr><td>Share of text pasted</td><td>${Math.round(s.pastedShare * 100)}%</td></tr>
       <tr><td>Typing events</td><td>${s.typedEvents}</td></tr>
       <tr><td>Pauses of 2 s or more</td><td>${s.pauses}</td></tr>
       <tr><td>Characters removed per 100 added</td><td>${Math.round(s.revisionShare * 100)}</td></tr>
       <tr><td>Total span</td><td>${fmt(s.spanMs)}</td></tr>
-      <tr><td>Final text fingerprint</td><td>${prints[k].slice(0, 12)}</td></tr></table>
+      <tr class="same"><td>Final text fingerprint${same ? ' <span class="tag">same in all three</span>' : ''}</td><td>${prints[k].slice(0, 12)}</td></tr></table>
       <div class="actions"><button class="btn" data-open="${name}">Replay this one</button></div>`;
     grid.appendChild(el);
     drawTimeline(el.querySelector('svg'), doc, 400, 64);
@@ -286,7 +286,7 @@ $('tamper').addEventListener('click', async () => {
   verifyDoc = doc;
   $('verify-btn').disabled = false;
   await runVerify('Sample with event ' + (k + 1) + ' changed');
-  $('result').insertAdjacentHTML('afterbegin', `<div class="note">SAMPLE: event ${k + 1} of the typed sample was changed by this button.</div>`);
+  $('result').insertAdjacentHTML('beforeend', `<div class="sample-note">SAMPLE: event ${k + 1} of the simulated typed sample was changed by this button.</div>`);
 });
 
 /* test hook: lets automated tests read the live recorder without exporting */

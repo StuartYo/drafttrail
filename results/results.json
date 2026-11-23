@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-23T19:03:05.649Z",
+  "generatedAt": "2026-11-23T19:12:30.111Z",
   "note": "Samples are simulated by scripts/gen-samples.mjs (seeded), not written by a person.",
   "samples": {
     "typed": {
@@ -59,7 +59,7 @@
     "edits": 300,
     "caught": 300,
     "caughtAtExactEvent": 300,
-    "avgVerifyMs": 19,
+    "avgVerifyMs": 24,
     "eventsPerFile": 1581,
     "relabelPasteAsTyped": {
       "caught": true,
@@ -71,7 +71,7 @@
     }
   },
   "browser": {
-    "ranAt": "2026-11-23T18:57:32.595Z",
+    "ranAt": "2026-11-23T19:11:11.269Z",
     "browser": "157.0.8103.79",
     "scenarios": {
       "typed with a correction": {
@@ -130,7 +130,7 @@
         "goodWithSeal": true,
         "wrongSealRejected": true,
         "tamperCaught": true,
-        "tamperMessage": "SAMPLE: event 791 of the typed sample was changed by this button.Does not verifyEvent 791: its fingerprint does not match. This event, or one before it, was changed after recording.First bad event: 791 of 1581"
+        "tamperMessage": "Does not verifyEvent 791: its fingerprint does not match. This event, or one before it, was changed after recording.First bad event: 791 of 1581SAMPLE: event 791 of the simulated typed sample was changed by this button."
       },
       "samples and compare": {
         "simulatedBannerShown": true,
