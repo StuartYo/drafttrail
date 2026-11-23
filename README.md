@@ -1,18 +1,18 @@
 # Drafttrail
 
-Write in the browser and keep a timed record of how the text was written. Save the record, hand it to a teacher, and they can replay the draft and check that nobody edited the record afterwards. No account, no server, nothing uploaded.
+Seven AI detectors flagged 61% of real TOEFL essays as AI-written on average. Drafttrail gives the writer something else to show: a timed record of how the essay was written, which a teacher can replay and check in their own browser. Google Docs version history and Grammarly Authorship also record writing, but both need an account and keep the record on the company's servers. Here the record is one file, checked offline, with no account and nothing uploaded.
 
 ## Why
 
 In a Stanford study, seven AI detectors labelled 61.22% of 91 human-written TOEFL essays as AI-generated on average, while essays by US eighth graders were classified almost perfectly ([Liang et al., 2023, *GPT detectors are biased against non-native English writers*](https://arxiv.org/abs/2304.02819)). A student who gets flagged has little to show except the essay itself, and the essay is exactly what the detector already misread.
 
-A record of the writing process is different evidence. It has to be collected while the person writes; it cannot be produced afterwards from the finished text.
+A record of the writing process is different evidence. It is collected while the person writes, and it can't be recovered from the finished text.
 
 ## What it does
 
 - **Write**: a plain text box. Each change becomes an event with a time, a position, the characters removed and the characters added, and a label: typed, deleted, pasted, moved, or other.
 - **Replay**: scrub or play the draft back. Pasted text is shaded, typed text is not. A timeline shows when the writing happened and where the pastes are.
-- **Compare**: three sample recordings that end with byte-identical text (same SHA-256), produced three different ways. A checker that reads only the finished text gets the same input three times.
+- **Compare**: three sample recordings that end with byte-identical text (same SHA-256), produced three different ways. Anything that reads only the finished text gets exactly the same input three times.
 - **Verify**: every event stores a SHA-256 fingerprint of itself plus the previous event's fingerprint. Change, remove or reorder any event and the check fails at that event. The short *seal code* (head fingerprint + event count) is meant to be sent separately from the file; it catches a file that was rebuilt from scratch.
 
 The sample recordings are simulated by `scripts/gen-samples.mjs` with seeded random timing. They are labelled as simulated in the file (`meta.simulated`) and on every screen that shows them.
@@ -23,6 +23,7 @@ The sample recordings are simulated by `scripts/gen-samples.mjs` with seeded ran
 - Someone can retype AI-generated text by hand, and the record will look like typing.
 - Without the seal code, a person who controls the file can rebuild the whole chain. With the seal code given to the reader at the time of writing, the rebuilt file no longer matches.
 - It is evidence about how text arrived in this text box. It is not a verdict and the page never gives one.
+- A recording holds the full text and your typing rhythm, so treat it as personal data. Nobody should be made to use Drafttrail; the writer decides whether to share a recording and with whom.
 
 ## Test results
 
@@ -36,11 +37,11 @@ All numbers below come from `results/results.json` (`npm run e2e`, then `node sc
 
 Tamper checks on the typed sample (1,581 events):
 
-- 300 random single-field edits (text, time, kind, position, length): 300 caught, all 300 at the edited event. Average verify time 19 ms in Node.
+- 300 random single-field edits (text, time, kind, position, length): 300 caught, all 300 at the edited event. Median check time 22 ms in Node on a laptop (`tamper.medianVerifyMs`).
 - Relabelling the one-shot paste as typing: caught at event 1.
 - Rebuilding every fingerprint after an edit: passes without the seal code (known limit), fails with the original seal code.
 
-Browser tests (Chrome 157, real keyboard and clipboard through Playwright): typing with a correction, an outside paste, cutting and moving your own sentence, cutting and moving pasted text, saving and verifying the downloaded file with its seal code, a wrong seal code, the tamper demo, and the sample screens. All pass.
+Browser tests (Chrome 157, real keyboard and clipboard through Playwright): typing with a correction, an outside paste, cutting and moving your own sentence, cutting and moving pasted text, saving and verifying the downloaded file with its seal code, a wrong seal code, the tamper demo, the sample screens (replay opens on the first paste), and a check that the page sends no request to any other host. All pass.
 
 ### What testing changed
 
@@ -68,7 +69,7 @@ Opening `index.html` directly from disk works for writing and verifying; the sam
 
 ## Credits
 
-- Fonts: IBM Plex Sans and IBM Plex Mono (SIL Open Font License), loaded from Google Fonts.
+- Fonts: IBM Plex Sans and IBM Plex Mono (SIL Open Font License 1.1, files from the Fontsource npm packages), shipped in `fonts/` with their license text. The page makes no requests to other hosts.
 - Browser tests and the demo video: Playwright (`playwright-core`, Apache-2.0) driving the local Chrome; video converted with FFmpeg.
 - Hashing: the browser's Web Crypto API. No other runtime libraries.
 - Code was written with help from Claude Code (Anthropic), an AI coding assistant. The sample essay used in the simulated recordings was also drafted with Claude.

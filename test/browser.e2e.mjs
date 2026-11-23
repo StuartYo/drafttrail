@@ -22,6 +22,9 @@ async function fresh() {
   const page = await ctx.newPage();
   const errors = [];
   page.on('pageerror', e => errors.push(String(e)));
+  const outside = [];
+  page.on('request', r => { const u = new URL(r.url()); if (!['127.0.0.1', 'localhost'].includes(u.hostname) && u.protocol.startsWith('http')) outside.push(r.url()); });
+  page.outside = outside;
   await page.goto(base);
   await page.click('#editor');
   return { ctx, page, errors };
@@ -138,11 +141,16 @@ await check('samples load, replay plays, compare renders', async () => {
     await page.click('.samples .sample[data-sample="sample-pasted.json"]');
     await page.waitForSelector('#replay-main:not([hidden])');
     assert.equal(await page.isVisible('#sim-banner'), true, 'simulated banner shown');
+    assert.match(await page.textContent('#clock'), /Event 1 of .*paste: 1,459 characters/, 'replay opens on the first paste');
+    assert.equal(await page.locator('#replay-text .hit').count(), 1, 'first paste outlined');
     await page.click('#next-paste');
     assert.match(await page.textContent('#clock'), /Event 1 of/); // next paste wraps to the first paste
     await page.click('#tab-compare');
     await page.waitForSelector('#compare-grid .pane:nth-child(3)');
-    results.scenarios['samples and compare'] = { simulatedBannerShown: true, compareCards: await page.locator('#compare-grid > .pane').count() };
+    const fontsLoaded = await page.evaluate(async () => { await document.fonts.ready; return document.fonts.check('16px "IBM Plex Sans"') && [...document.fonts].some(f => f.family.includes('IBM Plex Sans') && f.status === 'loaded'); });
+    results.scenarios['samples and compare'] = { simulatedBannerShown: true, compareCards: await page.locator('#compare-grid > .pane').count(), requestsToOtherHosts: page.outside.length, embeddedFontLoaded: fontsLoaded };
+    assert.equal(page.outside.length, 0, 'requests left this machine: ' + page.outside.join(', '));
+    assert.equal(fontsLoaded, true, 'embedded font not loaded');
     assert.equal(errors.length, 0, errors.join('; '));
   } finally { await ctx.close(); }
 });

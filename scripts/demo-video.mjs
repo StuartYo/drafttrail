@@ -43,19 +43,19 @@ await page.waitForSelector('#compare-grid .pane:nth-child(3)');
 await say('On average, seven AI detectors labelled 61% of human-written TOEFL essays as AI-generated (Liang et al., 2023).', 4600);
 await page.evaluate(() => { for (const tr of document.querySelectorAll('#compare-grid tr')) if (tr.textContent.includes('fingerprint')) { tr.style.cssText = 'background:#fbe3c0;outline:2px solid #a84a08'; for (const td of tr.cells) td.style.padding = '6px 8px'; } });
 await page.evaluate(() => { const g = document.getElementById('compare-grid'); window.scrollTo({ top: g.getBoundingClientRect().top + window.scrollY - 16, behavior: 'instant' }); });
-await say('Here are three simulated recordings of one essay. The finished text is byte-for-byte identical in all three.', 4200);
-await say('So any checker that reads only the final text, AI detector or person, must judge all three the same way.', 4800);
-await say('Drafttrail records how the text arrived: typed over 5 minutes, pasted in one go, or pasted and then lightly edited.', 5200);
+await say('Three simulated recordings, identical final text: a text-only check gets exactly the same input.', 5000);
 
-await page.evaluate(() => window.scrollTo(0, 0));
 // 2. Replay a pasted sample
 await page.click('#compare-grid .pane:nth-child(3) [data-open]');
 await page.waitForSelector('#replay-main:not([hidden])');
+await page.evaluate(() => window.scrollTo(0, 0));
+await say('The recordings are not identical. Replay opens on the first paste: 1,452 characters arrived in one event.', 5200);
 await page.evaluate(() => { document.getElementById('speed').value = '5'; });
 await page.click('#play');
-await say('Replay shows the draft growing. Pasted text is shaded; words typed afterwards are not. (Simulated sample.)', 5600);
-await page.click('#next-paste');
-await say('"Next paste" jumps straight to each paste event and shows its size.', 3800);
+await say('Playing on: the words changed after the paste are typed, so they are not shaded. (Simulated sample.)', 5600);
+await page.click('#tab-compare');
+await page.evaluate(() => window.scrollTo(0, 0));
+await say('Side by side: typed over 5 minutes, pasted in one go, or pasted and then lightly edited.', 4400);
 
 // 3. Write for real
 await page.click('#tab-write');
@@ -82,6 +82,7 @@ await page.keyboard.type(' ', { delay: 50 });
 await page.keyboard.press('Control+V');
 await wait(3000);
 await page.click('#open-replay');
+await page.evaluate(() => { const sc = document.getElementById('scrub'); sc.value = sc.max; sc.dispatchEvent(new Event('input')); window.scrollTo(0, 0); });
 await say('Moved text keeps its colour: my sentence stays "typed", the copied line stays "pasted".', 5200);
 
 // 5. Verify and tamper

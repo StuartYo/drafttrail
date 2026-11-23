@@ -31,17 +31,21 @@ const rand = () => (seed = (seed * 1664525 + 1013904223) >>> 0) / 2 ** 32;
 const base = load(names.typed);
 const fields = ['s', 't', 'k', 'p', 'd'];
 let tries = 0, caught = 0, caughtAtExactEvent = 0;
+const times = [];
 const t0 = performance.now();
 while (tries < 300) {
   const doc = structuredClone(base);
   const i = Math.floor(rand() * doc.events.length), f = fields[Math.floor(rand() * fields.length)], e = doc.events[i];
   if (f === 's') e.s = e.s + 'x'; else if (f === 'k') e.k = e.k === 'paste' ? 'type' : 'paste'; else e[f] = e[f] + 1;
   tries++;
+  const ts = performance.now();
   const r = await verify(doc);
+  times.push(performance.now() - ts);
   if (!r.ok) { caught++; if (r.brokenAt === i) caughtAtExactEvent++; }
 }
 const ms = performance.now() - t0;
-out.tamper = { edits: tries, caught, caughtAtExactEvent, avgVerifyMs: Math.round(ms / tries), eventsPerFile: base.events.length };
+times.sort((a, b) => a - b);
+out.tamper = { edits: tries, caught, caughtAtExactEvent, avgVerifyMs: Math.round(ms / tries), medianVerifyMs: Math.round(times[Math.floor(times.length / 2)]), eventsPerFile: base.events.length, timingNote: 'Wall-clock time in Node on the dev laptop; varies with machine load. The median is the figure quoted.' };
 
 // Relabel the paste in the one-shot sample as typing (the obvious cheat).
 const cheat = load(names.pasted); cheat.events[0].k = 'type';

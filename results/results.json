@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-23T19:12:30.111Z",
+  "generatedAt": "2026-11-23T19:31:56.626Z",
   "note": "Samples are simulated by scripts/gen-samples.mjs (seeded), not written by a person.",
   "samples": {
     "typed": {
@@ -59,8 +59,10 @@
     "edits": 300,
     "caught": 300,
     "caughtAtExactEvent": 300,
-    "avgVerifyMs": 24,
+    "avgVerifyMs": 26,
+    "medianVerifyMs": 22,
     "eventsPerFile": 1581,
+    "timingNote": "Wall-clock time in Node on the dev laptop; varies with machine load. The median is the figure quoted.",
     "relabelPasteAsTyped": {
       "caught": true,
       "reason": "Event 1: its fingerprint does not match. This event, or one before it, was changed after recording."
@@ -71,7 +73,7 @@
     }
   },
   "browser": {
-    "ranAt": "2026-11-23T19:11:11.269Z",
+    "ranAt": "2026-11-23T19:29:14.860Z",
     "browser": "157.0.8103.79",
     "scenarios": {
       "typed with a correction": {
@@ -134,7 +136,9 @@
       },
       "samples and compare": {
         "simulatedBannerShown": true,
-        "compareCards": 3
+        "compareCards": 3,
+        "requestsToOtherHosts": 0,
+        "embeddedFontLoaded": true
       }
     },
     "failures": 0

@@ -1,5 +1,5 @@
 {
-  "ranAt": "2026-11-23T19:11:11.269Z",
+  "ranAt": "2026-11-23T19:34:39.366Z",
   "browser": "157.0.8103.79",
   "scenarios": {
     "typed with a correction": {
@@ -62,7 +62,9 @@
     },
     "samples and compare": {
       "simulatedBannerShown": true,
-      "compareCards": 3
+      "compareCards": 3,
+      "requestsToOtherHosts": 0,
+      "embeddedFontLoaded": true
     }
   },
   "failures": 0

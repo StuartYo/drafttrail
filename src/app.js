@@ -112,7 +112,10 @@ try {
 let pos = 0;
 function openReplay(doc, name) {
   stopPlay();
-  current = doc; currentName = name; pos = doc.events.length;
+  current = doc; currentName = name;
+  // Open on the first paste if there is one, so the reader sees it straight away.
+  const firstPaste = doc.events.findIndex(e => e.k === 'paste');
+  pos = firstPaste >= 0 ? firstPaste + 1 : doc.events.length;
   $('replay-empty').hidden = true; $('replay-main').hidden = false;
   $('replay-title').textContent = `Replay: ${name}`;
   $('sim-banner').hidden = !doc.meta?.simulated;
@@ -146,13 +149,19 @@ function render() {
     return html;
   };
   const box = $('replay-text');
-  box.innerHTML = piece(0, caretAt) + '<span class="caret"></span>' + piece(caretAt, text.length);
-  const caret = box.querySelector('.caret');
-  const top = caret.offsetTop;
-  if (top < box.scrollTop + 20 || top > box.scrollTop + box.clientHeight - 40) box.scrollTop = Math.max(0, top - box.clientHeight / 2);
+  const isPaste = last && last.k === 'paste' && last.s.length > 0;
+  if (isPaste) {
+    // Outline the text this paste brought in, and scroll to where it starts.
+    box.innerHTML = piece(0, last.p) + '<span class="hit">' + piece(last.p, caretAt) + '</span><span class="caret"></span>' + piece(caretAt, text.length);
+    box.scrollTop = Math.max(0, box.querySelector('.hit').offsetTop - 12);
+  } else {
+    box.innerHTML = piece(0, caretAt) + '<span class="caret"></span>' + piece(caretAt, text.length);
+    const top = box.querySelector('.caret').offsetTop;
+    if (top < box.scrollTop + 20 || top > box.scrollTop + box.clientHeight - 40) box.scrollTop = Math.max(0, top - box.clientHeight / 2);
+  }
   $('scrub').value = pos;
   const t = pos ? doc.events[pos - 1].t : 0;
-  $('clock').textContent = `Event ${pos} of ${doc.events.length}   |   time ${fmt(t)}`;
+  $('clock').textContent = `Event ${pos} of ${doc.events.length}   |   time ${fmt(t)}` + (isPaste ? `   |   paste: ${last.s.length.toLocaleString('en-US')} characters arrived in one event` : '');
   const x = doc.events.length ? (t / Math.max(1, doc.events[doc.events.length - 1].t)) * 1000 : 0;
   const cur = $('timeline').querySelector('.cursor');
   if (cur) { cur.setAttribute('x1', x); cur.setAttribute('x2', x); }
@@ -222,7 +231,7 @@ async function renderCompare() {
   const same = new Set(prints).size === 1;
   const first = stats(docs[0][1]);
   $('compare-lede').textContent = same
-    ? `All three end with the same ${first.words} words, byte for byte (text fingerprint ${prints[0].slice(0, 12)}). A checker that reads only the finished essay, whether an AI detector, a language model or a teacher, gets identical input three times and has to give the same answer. The recordings below are what tells them apart.`
+    ? `All three end with the same ${first.words} words, byte for byte (text fingerprint ${prints[0].slice(0, 12)}). Anything that reads only the finished essay, an AI detector or a person, gets exactly the same input three times. The recordings below are what tells them apart.`
     : 'The three samples end with different text.';
   docs.forEach(([name, doc], k) => {
     const s = stats(doc);
