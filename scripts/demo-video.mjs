@@ -41,7 +41,7 @@ async function say(text, ms) {
 await page.click('#tab-compare');
 await page.waitForSelector('#compare-grid .pane:nth-child(3)');
 await say('On average, seven AI detectors labelled 61% of human-written TOEFL essays as AI-generated (Liang et al., 2023).', 4600);
-await page.evaluate(() => { for (const tr of document.querySelectorAll('#compare-grid tr')) if (tr.textContent.includes('fingerprint')) tr.style.cssText = 'background:#fbe3c0;outline:2px solid #a84a08'; });
+await page.evaluate(() => { for (const tr of document.querySelectorAll('#compare-grid tr')) if (tr.textContent.includes('fingerprint')) { tr.style.cssText = 'background:#fbe3c0;outline:2px solid #a84a08'; for (const td of tr.cells) td.style.padding = '6px 8px'; } });
 await page.evaluate(() => { const g = document.getElementById('compare-grid'); window.scrollTo({ top: g.getBoundingClientRect().top + window.scrollY - 16, behavior: 'instant' }); });
 await say('Here are three simulated recordings of one essay. The finished text is byte-for-byte identical in all three.', 4200);
 await say('So any checker that reads only the final text, AI detector or person, must judge all three the same way.', 4800);
